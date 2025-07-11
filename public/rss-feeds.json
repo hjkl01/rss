@@ -1,0 +1,99 @@
+{
+    "feeds": [
+        {
+            "name": "中国新闻网",
+            "category": "新闻",
+            "url": "https://www.chinanews.com.cn/rss/scroll-news.xml"
+        },
+        {
+            "name": "36氪",
+            "category": "新闻",
+            "url": "https://www.36kr.com/feed"
+        },
+        {
+            "name": "github all",
+            "category": "技术",
+            "url": "https://mshibanami.github.io/GitHubTrendingRSS/daily/all.xml"
+        },
+        {
+            "name": "github python",
+            "category": "技术",
+            "url": "https://mshibanami.github.io/GitHubTrendingRSS/weekly/python.xml"
+        },
+        {
+            "name": "github go",
+            "category": "技术",
+            "url": "https://mshibanami.github.io/GitHubTrendingRSS/weekly/go.xml"
+        },
+        {
+            "name": "github rust",
+            "category": "技术",
+            "url": "https://mshibanami.github.io/GitHubTrendingRSS/weekly/rust.xml"
+        },
+        {
+            "name": "github javascript",
+            "category": "技术",
+            "url": "https://mshibanami.github.io/GitHubTrendingRSS/weekly/javascript.xml"
+        },
+        {
+            "name": "github lua",
+            "category": "技术",
+            "url": "https://mshibanami.github.io/GitHubTrendingRSS/weekly/lua.xml"
+        },
+        {
+            "name": "全球主机交流论坛",
+            "category": "论坛",
+            "url": "https://hostloc.com/forum.php?mod=rss"
+        },
+        {
+            "name": "NodeSeek",
+            "category": "论坛",
+            "url": "https://rss.nodeseek.com/"
+        },
+        {
+            "name": "Arch Linux 中文论坛",
+            "category": "论坛",
+            "url": "https://bbs.archlinuxcn.org/extern.php?action=feed&type=rss"
+        },
+        {
+            "name": "技術討論區 | 草榴社區 - t66y.com",
+            "category": "资讯",
+            "url": "https://rsshub.app/t66y/7"
+        },
+        {
+            "name": "HelloGitHub 月刊",
+            "category": "技术",
+            "url": "http://hellogithub.com/rss"
+        },
+        {
+            "name": "V2EX",
+            "category": "论坛",
+            "url": "https://v2ex.com/index.xml"
+        },
+        {
+            "name": "路由器交流",
+            "category": "资讯",
+            "url": "https://www.acwifi.net/feed"
+        },
+        {
+            "name": "Solidot",
+            "url": "https://www.solidot.org/index.rss",
+            "category": "科技"
+        },
+        {
+            "name": "极客公园",
+            "url": "https://www.geekpark.net/rss",
+            "category": "科技"
+        },
+        {
+            "name": "阮一峰的网络日志",
+            "url": "https://www.ruanyifeng.com/blog/atom.xml",
+            "category": "资讯"
+        },
+        {
+            "name": "知乎每日精选",
+            "url": "http://www.zhihu.com/rss",
+            "category": "娱乐"
+        }
+    ]
+}
