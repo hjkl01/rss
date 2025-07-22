@@ -1,18 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { RssIcon, FolderIcon, ExternalLinkIcon, CalendarIcon, UserIcon, RefreshCwIcon, AlertCircleIcon, ChevronDownIcon, ChevronRightIcon } from 'lucide-react';
-import { RSSItem, RSSCategory, RSSConfig } from './types/rss';
+import { RSSItem, RSSCategory, RSSConfig, RSSFeedConfig } from './types/rss';
 
 interface GroupedFeeds {
   [source: string]: RSSItem[];
 }
 
+// 新增：以分类id为key的feeds缓存
+interface FeedsByCategory {
+  [categoryId: string]: RSSItem[];
+}
+
 function App() {
-  const [feeds, setFeeds] = useState<RSSItem[]>([]);
+  // feeds缓存，key为分类id，value为该分类下的feeds
+  const [feedsByCategory, setFeedsByCategory] = useState<FeedsByCategory>({});
   const [categories, setCategories] = useState<RSSCategory[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [expandedSources, setExpandedSources] = useState<Set<string>>(new Set());
+  const [rssConfig, setRssConfig] = useState<RSSConfig | null>(null);
 
   // 预定义的分类颜色
   const categoryColors = [
@@ -21,27 +28,25 @@ function App() {
     '#EC4899', '#6366F1', '#14B8A6', '#F43F5E'
   ];
 
+  // 初始化：只加载分类信息和rssConfig
   useEffect(() => {
-    loadRSSFeeds();
+    loadCategoriesAndConfig();
   }, []);
 
-  const loadRSSFeeds = async () => {
+  // 只加载分类信息和rssConfig
+  const loadCategoriesAndConfig = async () => {
     setLoading(true);
     setError(null);
-    
     try {
-      // 加载RSS配置文件
       const configResponse = await fetch('/rss-feeds.json');
       if (!configResponse.ok) {
         throw new Error('无法加载RSS配置文件');
       }
-      
       const config: RSSConfig = await configResponse.json();
-      
+      setRssConfig(config);
       // 动态生成分类
       const categoryMap = new Map<string, RSSCategory>();
       let colorIndex = 0;
-      
       config.feeds.forEach(feedConfig => {
         if (!categoryMap.has(feedConfig.category)) {
           categoryMap.set(feedConfig.category, {
@@ -53,40 +58,7 @@ function App() {
           colorIndex++;
         }
       });
-      
       setCategories(Array.from(categoryMap.values()));
-      
-      // 并发加载所有RSS源
-      const feedPromises = config.feeds.map(feedConfig => 
-        fetchRSSFeed(feedConfig, categoryMap.get(feedConfig.category)!)
-      );
-      
-      const results = await Promise.allSettled(feedPromises);
-      const allFeeds: RSSItem[] = [];
-      
-      results.forEach((result, index) => {
-        if (result.status === 'fulfilled' && result.value) {
-          allFeeds.push(...result.value);
-        } else {
-          console.warn(`Failed to load feed: ${config.feeds[index].name}`, result);
-        }
-      });
-      
-      // 按发布时间排序
-      allFeeds.sort((a, b) => b.pubDate.getTime() - a.pubDate.getTime());
-      setFeeds(allFeeds);
-      
-      // 更新分类计数
-      const updatedCategories = Array.from(categoryMap.values()).map(category => ({
-        ...category,
-        count: allFeeds.filter(feed => feed.category.id === category.id).length
-      }));
-      setCategories(updatedCategories);
-      
-      // 默认展开所有来源
-      const allSources = new Set(allFeeds.map(feed => feed.feedName));
-      setExpandedSources(allSources);
-      
     } catch (err) {
       setError(err instanceof Error ? err.message : '加载RSS内容时发生错误');
     } finally {
@@ -94,13 +66,99 @@ function App() {
     }
   };
 
-  const fetchRSSFeed = async (feedConfig: any, category: RSSCategory): Promise<RSSItem[] | null> => {
+  // 按分类加载feeds
+  const loadFeedsForCategory = async (categoryId: string) => {
+    if (!rssConfig) return;
+    setLoading(true);
+    setError(null);
     try {
-      // 使用RSS代理服务来避免CORS问题
+      // 找到该分类下的所有feedConfig
+      const category = categories.find((c: RSSCategory) => c.id === categoryId);
+      if (!category) throw new Error('分类不存在');
+      const feedConfigs = rssConfig.feeds.filter((f: RSSFeedConfig) => f.category.toLowerCase().replace(/\s+/g, '-') === categoryId);
+      // 并发加载
+      const feedPromises = feedConfigs.map((feedConfig: RSSFeedConfig) => fetchRSSFeed(feedConfig, category));
+      const results = await Promise.allSettled(feedPromises);
+      const allFeeds: RSSItem[] = [];
+      results.forEach((result: PromiseSettledResult<RSSItem[] | null>, index: number) => {
+        if (result.status === 'fulfilled' && result.value) {
+          allFeeds.push(...result.value);
+        } else {
+          console.warn(`Failed to load feed: ${feedConfigs[index].name}`, result);
+        }
+      });
+      // 按发布时间排序
+      allFeeds.sort((a, b) => b.pubDate.getTime() - a.pubDate.getTime());
+      setFeedsByCategory((prev: FeedsByCategory) => ({ ...prev, [categoryId]: allFeeds }));
+      // 默认展开所有来源
+      const allSources = new Set(allFeeds.map(feed => feed.feedName));
+      setExpandedSources(allSources);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '加载RSS内容时发生错误');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 加载全部分类下的feeds
+  const loadAllFeeds = async () => {
+    if (!rssConfig) return;
+    setLoading(true);
+    setError(null);
+    try {
+      // 按分类分组
+      const categoryMap = new Map<string, RSSCategory>();
+      let colorIndex = 0;
+      rssConfig.feeds.forEach((feedConfig: RSSFeedConfig) => {
+        const catId = feedConfig.category.toLowerCase().replace(/\s+/g, '-');
+        if (!categoryMap.has(catId)) {
+          categoryMap.set(catId, {
+            id: catId,
+            name: feedConfig.category,
+            color: categoryColors[colorIndex % categoryColors.length],
+            count: 0
+          });
+          colorIndex++;
+        }
+      });
+      // 按分类加载
+      const allCategoryIds = Array.from(categoryMap.keys());
+      const allFeedsByCategory: FeedsByCategory = {};
+      for (const categoryId of allCategoryIds) {
+        const category = categoryMap.get(categoryId)!;
+        const feedConfigs = rssConfig.feeds.filter((f: RSSFeedConfig) => f.category.toLowerCase().replace(/\s+/g, '-') === categoryId);
+        const feedPromises = feedConfigs.map((feedConfig: RSSFeedConfig) => fetchRSSFeed(feedConfig, category));
+        const results = await Promise.allSettled(feedPromises);
+        const allFeeds: RSSItem[] = [];
+        results.forEach((result: PromiseSettledResult<RSSItem[] | null>, index: number) => {
+          if (result.status === 'fulfilled' && result.value) {
+            allFeeds.push(...result.value);
+          } else {
+            console.warn(`Failed to load feed: ${feedConfigs[index].name}`, result);
+          }
+        });
+        allFeeds.sort((a, b) => b.pubDate.getTime() - a.pubDate.getTime());
+        allFeedsByCategory[categoryId] = allFeeds;
+      }
+      setFeedsByCategory(allFeedsByCategory);
+      // 展开所有来源
+      const allSources = new Set(
+        Object.values(allFeedsByCategory).flat().map(feed => feed.feedName)
+      );
+      setExpandedSources(allSources);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '加载RSS内容时发生错误');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // RSS代理加载
+  const fetchRSSFeed = async (feedConfig: RSSFeedConfig, category: RSSCategory): Promise<RSSItem[] | null> => {
+    try {
       const proxyUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedConfig.url)}`;
       const response = await fetch(proxyUrl);
       const data = await response.json();
-      
       if (data.status === 'ok' && data.items) {
         return data.items.map((item: any, index: number) => ({
           id: `${feedConfig.name}-${Date.now()}-${index}`,
@@ -121,22 +179,53 @@ function App() {
     }
   };
 
-  const filteredFeeds = selectedCategory 
-    ? feeds.filter(feed => feed.category.id === selectedCategory)
-    : feeds;
+  // 处理分类点击
+  const handleCategoryClick = async (categoryId: string | null) => {
+    setSelectedCategory(categoryId);
+    if (categoryId === null) {
+      // "全部"，如果还没加载过全部，则加载
+      if (Object.keys(feedsByCategory).length !== categories.length) {
+        await loadAllFeeds();
+      }
+    } else {
+      // 单个分类
+      if (!feedsByCategory[categoryId]) {
+        await loadFeedsForCategory(categoryId);
+      } else {
+        // 已加载，展开所有来源
+        const allSources = new Set(feedsByCategory[categoryId].map(feed => feed.feedName));
+        setExpandedSources(allSources);
+      }
+    }
+  };
+
+  // 刷新按钮：清空feeds缓存，重新加载当前分类
+  const handleRefresh = async () => {
+    setFeedsByCategory({});
+    if (selectedCategory === null) {
+      await loadAllFeeds();
+    } else if (selectedCategory) {
+      await loadFeedsForCategory(selectedCategory);
+    }
+  };
+
+  // 当前显示的feeds
+  let filteredFeeds: RSSItem[] = [];
+  if (selectedCategory === null) {
+    // "全部"，合并所有分类feeds
+    filteredFeeds = (Object.values(feedsByCategory).flat() as RSSItem[]);
+  } else if (selectedCategory) {
+    filteredFeeds = feedsByCategory[selectedCategory] || [];
+  }
 
   // 按来源分组
-  const groupedFeeds: GroupedFeeds = filteredFeeds.reduce((acc, feed) => {
+  const groupedFeeds: GroupedFeeds = filteredFeeds.reduce((acc: GroupedFeeds, feed: RSSItem) => {
     if (!acc[feed.feedName]) {
       acc[feed.feedName] = [];
     }
     acc[feed.feedName].push(feed);
     return acc;
   }, {} as GroupedFeeds);
-
-  const handleRefresh = () => {
-    loadRSSFeeds();
-  };
 
   const toggleSource = (sourceName: string) => {
     const newExpanded = new Set(expandedSources);
@@ -200,7 +289,7 @@ function App() {
               </h2>
               <div className="space-y-2">
                 <button
-                  onClick={() => setSelectedCategory(null)}
+                  onClick={() => handleCategoryClick(null)}
                   className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-200 flex items-center justify-between ${
                     selectedCategory === null 
                       ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg' 
@@ -209,13 +298,13 @@ function App() {
                 >
                   <span className="font-medium">全部</span>
                   <span className="text-sm bg-white bg-opacity-20 px-2 py-1 rounded-full">
-                    {feeds.length}
+                    {Object.values(feedsByCategory).flat().length}
                   </span>
                 </button>
                 {categories.map(category => (
                   <button
                     key={category.id}
-                    onClick={() => setSelectedCategory(category.id)}
+                    onClick={() => handleCategoryClick(category.id)}
                     className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-200 flex items-center justify-between ${
                       selectedCategory === category.id
                         ? 'shadow-lg text-white'
@@ -235,7 +324,7 @@ function App() {
                         color: selectedCategory === category.id ? 'white' : category.color
                       }}
                     >
-                      {category.count}
+                      {(feedsByCategory[category.id]?.length) || 0}
                     </span>
                   </button>
                 ))}
@@ -266,7 +355,7 @@ function App() {
                   <div className="bg-white rounded-xl shadow-lg p-12 text-center">
                     <RssIcon className="w-16 h-16 text-gray-400 mx-auto mb-4" />
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">暂无RSS内容</h3>
-                    <p className="text-gray-600 mb-6">请检查RSS配置文件或网络连接</p>
+                    <p className="text-gray-600 mb-6">请先选择分类</p>
                     <button
                       onClick={handleRefresh}
                       className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-6 py-3 rounded-lg transition-all duration-200 transform hover:scale-105"
@@ -278,7 +367,6 @@ function App() {
                   Object.entries(groupedFeeds).map(([sourceName, sourceFeeds]) => {
                     const isExpanded = expandedSources.has(sourceName);
                     const categoryColor = sourceFeeds[0]?.category.color || '#3B82F6';
-                    
                     return (
                       <div key={sourceName} className="bg-white rounded-xl shadow-lg overflow-hidden">
                         {/* 来源标题栏 */}
@@ -315,7 +403,6 @@ function App() {
                             </div>
                           </div>
                         </div>
-
                         {/* 文章列表 */}
                         {isExpanded && (
                           <div className="divide-y divide-gray-100">
