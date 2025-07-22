@@ -102,55 +102,7 @@ function App() {
 
   // 加载全部分类下的feeds
   const loadAllFeeds = async () => {
-    if (!rssConfig) return;
-    setLoading(true);
-    setError(null);
-    try {
-      // 按分类分组
-      const categoryMap = new Map<string, RSSCategory>();
-      let colorIndex = 0;
-      rssConfig.feeds.forEach((feedConfig: RSSFeedConfig) => {
-        const catId = feedConfig.category.toLowerCase().replace(/\s+/g, '-');
-        if (!categoryMap.has(catId)) {
-          categoryMap.set(catId, {
-            id: catId,
-            name: feedConfig.category,
-            color: categoryColors[colorIndex % categoryColors.length],
-            count: 0
-          });
-          colorIndex++;
-        }
-      });
-      // 按分类加载
-      const allCategoryIds = Array.from(categoryMap.keys());
-      const allFeedsByCategory: FeedsByCategory = {};
-      for (const categoryId of allCategoryIds) {
-        const category = categoryMap.get(categoryId)!;
-        const feedConfigs = rssConfig.feeds.filter((f: RSSFeedConfig) => f.category.toLowerCase().replace(/\s+/g, '-') === categoryId);
-        const feedPromises = feedConfigs.map((feedConfig: RSSFeedConfig) => fetchRSSFeed(feedConfig, category));
-        const results = await Promise.allSettled(feedPromises);
-        const allFeeds: RSSItem[] = [];
-        results.forEach((result: PromiseSettledResult<RSSItem[] | null>, index: number) => {
-          if (result.status === 'fulfilled' && result.value) {
-            allFeeds.push(...result.value);
-          } else {
-            console.warn(`Failed to load feed: ${feedConfigs[index].name}`, result);
-          }
-        });
-        allFeeds.sort((a, b) => b.pubDate.getTime() - a.pubDate.getTime());
-        allFeedsByCategory[categoryId] = allFeeds;
-      }
-      setFeedsByCategory(allFeedsByCategory);
-      // 展开所有来源
-      const allSources = new Set(
-        Object.values(allFeedsByCategory).flat().map(feed => feed.feedName)
-      );
-      setExpandedSources(allSources);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : '加载RSS内容时发生错误');
-    } finally {
-      setLoading(false);
-    }
+    return;
   };
 
   // RSS代理加载
@@ -183,16 +135,14 @@ function App() {
   const handleCategoryClick = async (categoryId: string | null) => {
     setSelectedCategory(categoryId);
     if (categoryId === null) {
-      // "全部"，如果还没加载过全部，则加载
       if (Object.keys(feedsByCategory).length !== categories.length) {
         await loadAllFeeds();
       }
     } else {
-      // 单个分类
       if (!feedsByCategory[categoryId]) {
-        await loadFeedsForCategory(categoryId);
+        await loadFeedsForCategory(categoryId); // 只在没缓存时加载
       } else {
-        // 已加载，展开所有来源
+        // 已加载，直接显示
         const allSources = new Set(feedsByCategory[categoryId].map(feed => feed.feedName));
         setExpandedSources(allSources);
       }
@@ -288,19 +238,6 @@ function App() {
                 分类
               </h2>
               <div className="space-y-2">
-                <button
-                  onClick={() => handleCategoryClick(null)}
-                  className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-200 flex items-center justify-between ${
-                    selectedCategory === null 
-                      ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg' 
-                      : 'text-gray-700 hover:bg-gray-50'
-                  }`}
-                >
-                  <span className="font-medium">全部</span>
-                  <span className="text-sm bg-white bg-opacity-20 px-2 py-1 rounded-full">
-                    {Object.values(feedsByCategory).flat().length}
-                  </span>
-                </button>
                 {categories.map(category => (
                   <button
                     key={category.id}
@@ -351,11 +288,11 @@ function App() {
               </div>
             ) : (
               <div className="space-y-6">
-                {Object.keys(groupedFeeds).length === 0 ? (
+                {Object.entries(groupedFeeds).length === 0 ? (
                   <div className="bg-white rounded-xl shadow-lg p-12 text-center">
                     <RssIcon className="w-16 h-16 text-gray-400 mx-auto mb-4" />
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">暂无RSS内容</h3>
-                    <p className="text-gray-600 mb-6">请先选择分类</p>
+                    <p className="text-gray-600 mb-6">该分类下暂无内容或加载失败</p>
                     <button
                       onClick={handleRefresh}
                       className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-6 py-3 rounded-lg transition-all duration-200 transform hover:scale-105"
