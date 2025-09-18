@@ -1,103 +1,298 @@
 {
     "feeds": [
         {
+            "title": "中国新闻网 即时新闻",
+            "category": "新闻",
+            "url": "https://www.chinanews.com.cn/rss/scroll-news.xml"
+        },
+        {
+            "title": "中国新闻网 要闻导读",
+            "category": "新闻",
+            "url": "https://www.chinanews.com.cn/rss/importnews.xml"
+        },
+        {
+            "title": "中国新闻网 时政新闻",
+            "category": "新闻",
+            "url": "https://www.chinanews.com.cn/rss/china.xml"
+        },
+        {
+            "title": "36氪",
+            "category": "新闻",
+            "url": "https://www.36kr.com/feed"
+        },
+        {
+            "title": "iDaily 每日环球视野",
+            "url": "https://plink.anyfeeder.com/idaily/today",
+            "category": "新闻"
+        },
+        {
+            "title": "求是网",
+            "url": "https://plink.anyfeeder.com/qstheory",
+            "category": "新闻"
+        },
+        {
+            "title": "网易新闻 / 今日关注",
+            "url": "https://plink.anyfeeder.com/netease/today",
+            "category": "新闻"
+        },
+        {
+            "title": "新华网 / 新华社新闻",
+            "url": "https://plink.anyfeeder.com/newscn/whxw",
+            "category": "新闻"
+        },
+        {
+            "title": "联合早报 / 中国",
+            "url": "https://plink.anyfeeder.com/zaobao/realtime/china",
+            "category": "新闻"
+        },
+        {
+            "title": "南方周末 / 新闻",
+            "url": "https://plink.anyfeeder.com/infzm/news",
+            "category": "新闻"
+        },
+        {
+            "title": "澎湃新闻",
+            "url": "https://plink.anyfeeder.com/thepaper",
+            "category": "新闻"
+        },
+        {
+            "title": "人民日报",
+            "url": "https://plink.anyfeeder.com/people-daily",
+            "category": "新闻"
+        },
+        {
+            "title": "光明日报",
+            "url": "https://plink.anyfeeder.com/guangmingribao",
+            "category": "新闻"
+        },
+        {
+            "title": "界面新闻: 新闻",
+            "url": "https://plink.anyfeeder.com/jiemian/news",
+            "category": "新闻"
+        },
+        {
+            "title": "SBS 中文",
+            "url": "https://plink.anyfeeder.com/sbs/chinese",
+            "category": "国外"
+        },
+        {
+            "title": "VOA 美国之音",
+            "url": "https://plink.anyfeeder.com/voa/chinese",
+            "category": "国外"
+        },
+        {
+            "title": "端传媒 / 最新",
+            "url": "https://plink.anyfeeder.com/initium/latest",
+            "category": "国外"
+        },
+        {
+            "title": "端传媒 / 深度",
+            "url": "https://plink.anyfeeder.com/initium/feature",
+            "category": "国外"
+        },
+        {
+            "title": "BBC 中文版",
+            "url": "https://plink.anyfeeder.com/bbc/cn",
+            "category": "国外"
+        },
+        {
+            "title": "RFI 法国国际广播电台",
+            "url": "https://plink.anyfeeder.com/rfi/cn",
+            "category": "国外"
+        },
+        {
+            "title": "ABC 澳大利亚广播公司",
+            "url": "https://plink.anyfeeder.com/abc/cn",
+            "category": "国外"
+        },
+        {
+            "title": "纽约时报双语版",
+            "url": "https://plink.anyfeeder.com/nytimes/dual",
+            "category": "国外"
+        },
+        {
+            "title": "github all",
+            "category": "技术",
+            "url": "https://mshibanami.github.io/GitHubTrendingRSS/daily/all.xml"
+        },
+        {
+            "title": "github python",
+            "category": "技术",
+            "url": "https://mshibanami.github.io/GitHubTrendingRSS/weekly/python.xml"
+        },
+        {
+            "title": "github go",
+            "category": "技术",
+            "url": "https://mshibanami.github.io/GitHubTrendingRSS/weekly/go.xml"
+        },
+        {
+            "title": "github rust",
+            "category": "技术",
+            "url": "https://mshibanami.github.io/GitHubTrendingRSS/weekly/rust.xml"
+        },
+        {
+            "title": "github javascript",
+            "category": "技术",
+            "url": "https://mshibanami.github.io/GitHubTrendingRSS/weekly/javascript.xml"
+        },
+        {
+            "title": "github lua",
+            "category": "技术",
+            "url": "https://mshibanami.github.io/GitHubTrendingRSS/weekly/lua.xml"
+        },
+        {
+            "title": "全球主机交流论坛",
+            "category": "论坛",
+            "url": "https://hostloc.com/forum.php?mod=rss"
+        },
+        {
+            "title": "NodeSeek",
+            "category": "论坛",
+            "url": "https://rss.nodeseek.com/"
+        },
+        {
+            "title": "Arch Linux 中文论坛",
+            "category": "论坛",
+            "url": "https://bbs.archlinuxcn.org/extern.php?action=feed&type=rss"
+        },
+        {
+            "title": "NodeLoc",
+            "category": "论坛",
+            "url": "https://www.nodeloc.com/atom/discussions"
+        },
+        {
+            "title": "V2EX",
+            "category": "论坛",
+            "url": "https://v2ex.com/index.xml"
+        },
+        {
+            "title": "路由器交流",
+            "category": "资讯",
+            "url": "https://www.acwifi.net/feed"
+        },
+        {
+            "title": "技術討論區 | 草榴社區 - t66y.com",
+            "category": "资讯",
+            "url": "https://rsshub.app/t66y/7"
+        },
+        {
+            "title": "HelloGitHub 月刊",
+            "category": "技术",
+            "url": "http://hellogithub.com/rss"
+        },
+        {
+            "title": "阮一峰的网络日志",
+            "url": "https://www.ruanyifeng.com/blog/atom.xml",
+            "category": "技术"
+        },
+        {
+            "title": "Solidot",
+            "url": "https://www.solidot.org/index.rss",
+            "category": "科技"
+        },
+        {
+            "title": "极客公园",
+            "url": "https://www.geekpark.net/rss",
+            "category": "科技"
+        },
+        {
+            "title": "IT 之家",
+            "url": "https://plink.anyfeeder.com/ithome/it",
+            "category": "科技"
+        },
+        {
+            "title": "MIT 科技评论 / 本周热榜",
+            "url": "https://plink.anyfeeder.com/mittrchina/hot",
+            "category": "科技"
+        },
+        {
+            "title": "爱范儿",
+            "url": "https://plink.anyfeeder.com/ifanr",
+            "category": "科技"
+        },
+        {
+            "title": "果壳网 / 科学人",
+            "url": "https://plink.anyfeeder.com/guokr/scientific",
+            "category": "科技"
+        },
+        {
+            "title": "快科技",
+            "url": "https://plink.anyfeeder.com/mydrivers",
+            "category": "科技"
+        },
+        {
+            "title": "雷峰网",
+            "url": "https://plink.anyfeeder.com/leiphone",
+            "category": "科技"
+        },
+        {
+            "title": "软餐 - 新鲜软件资讯",
+            "url": "https://plink.anyfeeder.com/ruancan",
+            "category": "科技"
+        },
+        {
+            "title": "少数派",
+            "url": "https://plink.anyfeeder.com/sspai",
+            "category": "科技"
+        },
+        {
+            "title": "新浪专栏 / 创事记",
+            "url": "https://plink.anyfeeder.com/sina/csj",
+            "category": "科技"
+        },
+        {
+            "title": "超能网",
+            "url": "https://plink.anyfeeder.com/expreview",
+            "category": "科技"
+        },
+        {
+            "title": "钛媒体",
+            "url": "https://plink.anyfeeder.com/tmtpost",
+            "category": "科技"
+        },
+        {
+            "title": "人人都是产品经理",
+            "url": "https://plink.anyfeeder.com/woshipm/popular",
+            "category": "科技"
+        },
+        {
+            "title": "InfoQ 中文",
+            "url": "https://plink.anyfeeder.com/infoq/recommend",
+            "category": "科技"
+        },
+        {
+            "title": "FreeBuf 关注黑客",
+            "url": "https://plink.anyfeeder.com/freebuf",
+            "category": "科技"
+        },
+        {
+            "title": "观止·每日一文",
+            "url": "https://plink.anyfeeder.com/meiriyiwen",
+            "category": "科技"
+        },
+        {
             "name": "Epic Game",
             "category": "娱乐",
             "url": "https://www.epicbundle.com/feed/"
         },
         {
-            "name": "中国新闻网",
-            "category": "新闻",
-            "url": "https://www.chinanews.com.cn/rss/scroll-news.xml"
+            "title": "简书 / 首页",
+            "url": "https://plink.anyfeeder.com/jianshu/home",
+            "category": "娱乐"
         },
         {
-            "name": "36氪",
-            "category": "新闻",
-            "url": "https://www.36kr.com/feed"
+            "title": "喷嚏图卦",
+            "url": "https://plink.anyfeeder.com/pentitugua",
+            "category": "娱乐"
         },
         {
-            "name": "github all",
-            "category": "技术",
-            "url": "https://mshibanami.github.io/GitHubTrendingRSS/daily/all.xml"
+            "title": "豆瓣最受欢迎的影评",
+            "url": "https://plink.anyfeeder.com/douban/review/movie",
+            "category": "娱乐"
         },
         {
-            "name": "github python",
-            "category": "技术",
-            "url": "https://mshibanami.github.io/GitHubTrendingRSS/weekly/python.xml"
-        },
-        {
-            "name": "github go",
-            "category": "技术",
-            "url": "https://mshibanami.github.io/GitHubTrendingRSS/weekly/go.xml"
-        },
-        {
-            "name": "github rust",
-            "category": "技术",
-            "url": "https://mshibanami.github.io/GitHubTrendingRSS/weekly/rust.xml"
-        },
-        {
-            "name": "github javascript",
-            "category": "技术",
-            "url": "https://mshibanami.github.io/GitHubTrendingRSS/weekly/javascript.xml"
-        },
-        {
-            "name": "github lua",
-            "category": "技术",
-            "url": "https://mshibanami.github.io/GitHubTrendingRSS/weekly/lua.xml"
-        },
-        {
-            "name": "全球主机交流论坛",
-            "category": "论坛",
-            "url": "https://hostloc.com/forum.php?mod=rss"
-        },
-        {
-            "name": "NodeSeek",
-            "category": "论坛",
-            "url": "https://rss.nodeseek.com/"
-        },
-        {
-            "name": "Arch Linux 中文论坛",
-            "category": "论坛",
-            "url": "https://bbs.archlinuxcn.org/extern.php?action=feed&type=rss"
-        },
-        {
-            "name": "技術討論區 | 草榴社區 - t66y.com",
-            "category": "资讯",
-            "url": "https://rsshub.app/t66y/7"
-        },
-        {
-            "name": "HelloGitHub 月刊",
-            "category": "技术",
-            "url": "http://hellogithub.com/rss"
-        },
-        {
-            "name": "V2EX",
-            "category": "论坛",
-            "url": "https://v2ex.com/index.xml"
-        },
-        {
-            "name": "路由器交流",
-            "category": "资讯",
-            "url": "https://www.acwifi.net/feed"
-        },
-        {
-            "name": "Solidot",
-            "url": "https://www.solidot.org/index.rss",
-            "category": "科技"
-        },
-        {
-            "name": "极客公园",
-            "url": "https://www.geekpark.net/rss",
-            "category": "科技"
-        },
-        {
-            "name": "阮一峰的网络日志",
-            "url": "https://www.ruanyifeng.com/blog/atom.xml",
-            "category": "资讯"
-        },
-        {
-            "name": "知乎每日精选",
-            "url": "http://www.zhihu.com/rss",
+            "title": "微博 / 热搜榜",
+            "url": "https://plink.anyfeeder.com/weibo/search/hot",
             "category": "娱乐"
         }
     ]
